@@ -24,12 +24,11 @@
       box-shadow: 0 2px 8px rgba(0,0,0,.5);
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 200;
     }
     header .logo { font-size: 28px; }
     header h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
     header .live-badge {
-      margin-left: auto;
       background: #e63946;
       color: #fff;
       font-size: 12px;
@@ -41,6 +40,81 @@
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50%       { opacity: .5; }
+    }
+    .header-auth {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-auth {
+      background: rgba(255,255,255,.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 6px;
+      padding: 5px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-auth:hover { background: rgba(255,255,255,.25); }
+    .btn-auth.primary {
+      background: #238636;
+      border-color: #238636;
+    }
+    .btn-auth.primary:hover { background: #2ea043; }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #d1fae5;
+    }
+    .user-avatar-sm {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+    }
+    .btn-logout {
+      background: none;
+      border: 1px solid rgba(255,255,255,.3);
+      color: #e6edf3;
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,.1); }
+
+    /* ── Top Ad Banner ── */
+    .ad-banner-top {
+      background: linear-gradient(90deg, #1c2951 0%, #162040 100%);
+      border-bottom: 1px solid #30363d;
+      padding: 10px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: #8b949e;
+      position: relative;
+    }
+    .ad-banner-top a {
+      color: #58a6ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .ad-banner-top a:hover { text-decoration: underline; }
+    .ad-label {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      font-size: 10px;
+      color: #484f58;
+      border: 1px solid #30363d;
+      border-radius: 3px;
+      padding: 1px 5px;
     }
 
     /* ── Layout ── */
@@ -76,6 +150,61 @@
       align-items: center;
       gap: 8px;
     }
+
+    /* ── Live Video ── */
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 */
+      height: 0;
+      overflow: hidden;
+      background: #000;
+    }
+    .video-wrapper iframe,
+    .video-wrapper .video-placeholder {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    .video-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0d1117;
+      color: #8b949e;
+      font-size: 14px;
+      gap: 12px;
+    }
+    .video-placeholder .play-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(63,185,80,.15);
+      border: 2px solid #3fb950;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .video-placeholder .play-icon:hover { background: rgba(63,185,80,.3); }
+    .video-select {
+      display: flex;
+      gap: 8px;
+      padding: 10px 16px;
+      border-top: 1px solid #21262d;
+      flex-wrap: wrap;
+    }
+    .btn-channel {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-channel:hover { background: #2d333b; }
+    .btn-channel.active { background: #1a6e2e; border-color: #3fb950; color: #fff; }
 
     /* ── Match Cards ── */
     .match {
@@ -140,24 +269,11 @@
     .post-form .form-footer {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       margin-top: 10px;
       flex-wrap: wrap;
       gap: 8px;
     }
-    .post-form .name-input {
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      color: #e6edf3;
-      font-size: 13px;
-      font-family: inherit;
-      padding: 6px 10px;
-      width: 160px;
-      outline: none;
-      transition: border-color .15s;
-    }
-    .post-form .name-input:focus { border-color: #3fb950; }
     .btn-submit {
       background: #238636;
       color: #fff;
@@ -171,6 +287,16 @@
     }
     .btn-submit:hover { background: #2ea043; }
     .btn-submit:active { background: #1a7f37; }
+
+    /* ── Login Gate ── */
+    .login-gate {
+      padding: 24px 16px;
+      text-align: center;
+      color: #8b949e;
+      font-size: 14px;
+    }
+    .login-gate p { margin-bottom: 14px; }
+    .login-gate-btns { display: flex; gap: 10px; justify-content: center; }
 
     /* ── Comment List ── */
     .comments { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 12px; }
@@ -259,16 +385,230 @@
     .trending-text { flex: 1; color: #c9d1d9; }
     .trending-count { font-size: 11px; color: #8b949e; }
 
+    /* ── Ad Cards ── */
+    .ad-card { padding: 16px; }
+    .ad-card-inner {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #30363d;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .ad-card-inner:hover { border-color: #58a6ff; }
+    .ad-img-placeholder {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+    .ad-card-body { padding: 10px 12px; background: #0d1117; }
+    .ad-card-title { font-size: 13px; font-weight: 600; color: #e6edf3; margin-bottom: 4px; }
+    .ad-card-desc { font-size: 12px; color: #8b949e; }
+    .ad-card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 8px;
+    }
+    .ad-tag { font-size: 10px; color: #484f58; }
+    .ad-cta {
+      font-size: 11px; color: #58a6ff; font-weight: 600;
+      text-decoration: none;
+    }
+
     /* ── Empty state ── */
     .empty { text-align: center; color: #484f58; padding: 32px 16px; font-size: 14px; }
+
+    /* ── Toast ── */
+    .toast-wrap {
+      position: fixed; bottom: 24px; right: 24px;
+      display: flex; flex-direction: column; gap: 8px;
+      z-index: 9999; pointer-events: none;
+    }
+    .toast {
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      color: #e6edf3;
+      min-width: 200px;
+      max-width: 320px;
+      animation: toastIn .25s ease;
+      pointer-events: auto;
+      word-break: break-word;
+    }
+    .toast.success { border-left: 3px solid #3fb950; }
+    .toast.error   { border-left: 3px solid #e63946; }
+    .toast.info    { border-left: 3px solid #58a6ff; }
+    @keyframes toastIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── Modal Overlay ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.65);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 28px 28px 24px;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 14px; right: 14px;
+      background: none; border: none; color: #8b949e;
+      font-size: 20px; cursor: pointer; line-height: 1;
+      transition: color .15s;
+    }
+    .modal-close:hover { color: #e6edf3; }
+    .modal h2 {
+      font-size: 20px; font-weight: 700; margin-bottom: 6px;
+      color: #f0f6fc;
+    }
+    .modal-subtitle {
+      font-size: 13px; color: #8b949e; margin-bottom: 20px;
+    }
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: #c9d1d9; margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #e6edf3;
+      font-size: 14px;
+      font-family: inherit;
+      padding: 8px 12px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .form-control:focus { border-color: #3fb950; }
+    .form-control.error { border-color: #e63946; }
+    .input-group { display: flex; gap: 8px; }
+    .input-group .form-control { flex: 1; }
+    .btn-send-code {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #58a6ff;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .btn-send-code:hover { background: #2d333b; }
+    .btn-send-code:disabled { color: #484f58; cursor: not-allowed; }
+    .btn-primary-full {
+      width: 100%;
+      background: #238636;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background .15s;
+    }
+    .btn-primary-full:hover { background: #2ea043; }
+    .btn-primary-full:active { background: #1a7f37; }
+    .modal-footer {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 13px;
+      color: #8b949e;
+    }
+    .modal-footer a {
+      color: #58a6ff;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .modal-footer a:hover { text-decoration: underline; }
+    .modal-divider {
+      border: none;
+      border-top: 1px solid #21262d;
+      margin: 16px 0;
+    }
+    .field-hint {
+      font-size: 11px; color: #8b949e; margin-top: 4px;
+    }
+    .field-hint.code-demo {
+      color: #3fb950; font-family: monospace; font-size: 13px;
+      font-weight: 600; background: #0d1117;
+      border: 1px solid #21262d; border-radius: 4px;
+      padding: 4px 8px; display: inline-block; margin-top: 6px;
+    }
+
+    /* ── Bottom Ad Banner ── */
+    .ad-banner-bottom {
+      background: #161b22;
+      border-top: 1px solid #30363d;
+      padding: 20px 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .ad-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .ad-item:hover { border-color: #58a6ff; }
+    .ad-item-icon { font-size: 28px; }
+    .ad-item-info { flex: 1; }
+    .ad-item-title { font-size: 13px; font-weight: 600; color: #e6edf3; }
+    .ad-item-sub   { font-size: 11px; color: #8b949e; margin-top: 2px; }
+    .footer-ad-wrap {
+      background: #0d1117;
+      border-top: 1px solid #21262d;
+      padding: 8px 0 4px;
+    }
+    .footer-ad-label {
+      text-align: center;
+      font-size: 11px;
+      color: #484f58;
+      margin-bottom: 8px;
+      letter-spacing: .5px;
+    }
   </style>
 </head>
 <body>
+
+<!-- ── Top Ad Banner ── -->
+<div class="ad-banner-top">
+  ⚽ <strong style="color:#e6edf3">乐视体育</strong> · 高清直播全程无广告打扰，欧冠赛事不错过！
+  <a href="#" onclick="return false">立即开通会员 →</a>
+  <span class="ad-label">广告</span>
+</div>
 
 <header>
   <span class="logo">⚽</span>
   <h1>足球转播讨论页</h1>
   <span class="live-badge">● 直播中</span>
+  <div class="header-auth" id="header-auth">
+    <!-- filled by renderAuthHeader() -->
+  </div>
 </header>
 
 <div class="container">
@@ -276,21 +616,43 @@
   <!-- ── Left Column ── -->
   <div class="discussion-main">
 
+    <!-- Live Video -->
+    <div class="card">
+      <div class="card-header">📺 实时直播视频</div>
+      <div class="video-wrapper">
+        <div class="video-placeholder" id="video-placeholder">
+          <div class="play-icon" role="button" tabindex="0"
+            onclick="startStream()"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startStream();}">▶</div>
+          <span>点击播放当前直播信号</span>
+          <span style="font-size:12px;color:#484f58">演示模式 · 可切换频道</span>
+        </div>
+        <iframe id="live-iframe"
+          style="display:none;border:none;"
+          allow="autoplay; fullscreen"
+          allowfullscreen
+          src="about:blank">
+        </iframe>
+      </div>
+      <div class="video-select" id="channel-btns">
+        <button class="btn-channel active" data-ch="0" onclick="selectChannel(0)">🔴 欧冠直播 1</button>
+        <button class="btn-channel" data-ch="1" onclick="selectChannel(1)">🟡 欧冠直播 2</button>
+        <button class="btn-channel" data-ch="2" onclick="selectChannel(2)">🔵 欧冠直播 3</button>
+        <button class="btn-channel" data-ch="3" onclick="selectChannel(3)">⚪ 欧冠精彩集锦</button>
+      </div>
+    </div>
+
     <!-- Match List -->
     <div class="card">
       <div class="card-header">📡 正在直播</div>
       <div id="match-list"></div>
     </div>
 
-    <!-- Post Form -->
+    <!-- Post Form (login-gated) -->
     <div class="card">
       <div class="card-header">💬 发表评论</div>
-      <div class="post-form">
-        <textarea id="comment-input" placeholder="分享你的看法、赛事分析或精彩时刻…"></textarea>
-        <div class="form-footer">
-          <input class="name-input" id="name-input" type="text" placeholder="昵称（可选）" maxlength="20" />
-          <button class="btn-submit" id="submit-btn">发表评论</button>
-        </div>
+      <div id="post-area">
+        <!-- filled by renderPostArea() -->
       </div>
     </div>
 
@@ -311,17 +673,547 @@
       <div class="match-stats" id="stats-panel"></div>
     </div>
 
+    <!-- Ad 1 -->
+    <div class="card">
+      <div class="card-header" style="text-transform:none">🎯 推荐广告</div>
+      <div class="ad-card">
+        <div class="ad-card-inner" role="button" tabindex="0" onclick="return false">
+          <div class="ad-img-placeholder" style="background:linear-gradient(135deg,#1a2a4a,#0d1a35)">🏆</div>
+          <div class="ad-card-body">
+            <div class="ad-card-title">Nike 2025 欧冠限定球衣</div>
+            <div class="ad-card-desc">顶级速干面料 · 官方授权 · 限量发售</div>
+            <div class="ad-card-footer">
+              <span class="ad-tag">广告</span>
+              <a class="ad-cta" href="#" onclick="return false">立即购买 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Trending Topics -->
     <div class="card">
       <div class="card-header">🔥 热议话题</div>
       <div class="trending" id="trending-list"></div>
     </div>
 
+    <!-- Ad 2 -->
+    <div class="card">
+      <div class="card-header" style="text-transform:none">📢 赞助商</div>
+      <div class="ad-card">
+        <div class="ad-card-inner" role="button" tabindex="0" onclick="return false">
+          <div class="ad-img-placeholder" style="background:linear-gradient(135deg,#2a1a4a,#1a0d35)">🎮</div>
+          <div class="ad-card-body">
+            <div class="ad-card-desc">真实赛事数据 · 百万球迷在线 · 立即体验</div>
+            <div class="ad-card-footer">
+              <span class="ad-tag">广告</span>
+              <a class="ad-cta" href="#" onclick="return false">免费下载 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
+<!-- ── Bottom Ad Strip ── -->
+<div class="footer-ad-wrap">
+  <div class="footer-ad-label">广告合作</div>
+  <div class="ad-banner-bottom">
+    <div class="ad-item" role="button" tabindex="0" onclick="return false">
+      <span class="ad-item-icon">🎟️</span>
+      <div class="ad-item-info">
+        <div class="ad-item-title">欧冠决赛门票</div>
+        <div class="ad-item-sub">官方授权 · 正品保障 · 立即抢购</div>
+      </div>
+    </div>
+    <div class="ad-item" role="button" tabindex="0" onclick="return false">
+      <span class="ad-item-icon">📡</span>
+      <div class="ad-item-info">
+        <div class="ad-item-title">足球直播 VIP</div>
+        <div class="ad-item-sub">超高清画质 · 全赛季不限次</div>
+      </div>
+    </div>
+    <div class="ad-item" role="button" tabindex="0" onclick="return false">
+      <span class="ad-item-icon">⚽</span>
+      <div class="ad-item-info">
+        <div class="ad-item-title">Adidas 官方旗舰店</div>
+        <div class="ad-item-sub">球鞋 · 球衣 · 训练装备</div>
+      </div>
+    </div>
+    <div class="ad-item" role="button" tabindex="0" onclick="return false">
+      <span class="ad-item-icon">📊</span>
+      <div class="ad-item-info">
+        <div class="ad-item-title">足球数据分析平台</div>
+        <div class="ad-item-sub">AI 赛事预测 · 专业球探工具</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MODALS ══════════════ -->
+
+<!-- Login Modal -->
+<div class="modal-overlay hidden" id="modal-login">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="login-title">
+    <button class="modal-close" onclick="closeModal('login')" aria-label="关闭">×</button>
+    <h2 id="login-title">登录账号</h2>
+    <p class="modal-subtitle">欢迎回来，请登录后参与讨论</p>
+
+    <div class="form-group">
+      <label for="login-contact">手机号 / 邮箱</label>
+      <input class="form-control" id="login-contact" type="text" placeholder="请输入手机号或邮箱" autocomplete="username" />
+    </div>
+    <div class="form-group">
+      <label for="login-password">密码</label>
+      <input class="form-control" id="login-password" type="password" placeholder="请输入密码" autocomplete="current-password" />
+    </div>
+
+    <button class="btn-primary-full" onclick="doLogin()">登 录</button>
+
+    <hr class="modal-divider" />
+    <div class="modal-footer">
+      <a onclick="switchModal('login','forgot')">忘记密码？</a>
+      &nbsp;·&nbsp;
+      没有账号？<a onclick="switchModal('login','register')">立即注册</a>
+    </div>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal-overlay hidden" id="modal-register">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="register-title">
+    <button class="modal-close" onclick="closeModal('register')" aria-label="关闭">×</button>
+    <h2 id="register-title">注册账号</h2>
+    <p class="modal-subtitle">使用手机号或邮箱接收验证码完成注册</p>
+
+    <div class="form-group">
+      <label for="reg-contact">手机号 / 邮箱</label>
+      <div class="input-group">
+        <input class="form-control" id="reg-contact" type="text" placeholder="请输入手机号或邮箱" autocomplete="username" />
+        <button class="btn-send-code" id="reg-code-btn" onclick="sendCode('register')">发送验证码</button>
+      </div>
+      <div id="reg-code-hint" class="field-hint"></div>
+    </div>
+    <div class="form-group">
+      <label for="reg-code">验证码</label>
+      <input class="form-control" id="reg-code" type="text" placeholder="请输入6位验证码" maxlength="6" autocomplete="one-time-code" />
+    </div>
+    <div class="form-group">
+      <label for="reg-nickname">昵称</label>
+      <input class="form-control" id="reg-nickname" type="text" placeholder="给自己起个昵称（2-16位）" maxlength="16" autocomplete="nickname" />
+    </div>
+    <div class="form-group">
+      <label for="reg-password">密码</label>
+      <input class="form-control" id="reg-password" type="password" placeholder="至少6位密码" autocomplete="new-password" />
+    </div>
+    <div class="form-group">
+      <label for="reg-password2">确认密码</label>
+      <input class="form-control" id="reg-password2" type="password" placeholder="再次输入密码" autocomplete="new-password" />
+    </div>
+
+    <button class="btn-primary-full" onclick="doRegister()">注 册</button>
+
+    <hr class="modal-divider" />
+    <div class="modal-footer">
+      已有账号？<a onclick="switchModal('register','login')">立即登录</a>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="modal-overlay hidden" id="modal-forgot">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="forgot-title">
+    <button class="modal-close" onclick="closeModal('forgot')" aria-label="关闭">×</button>
+    <h2 id="forgot-title">忘记密码</h2>
+    <p class="modal-subtitle">通过注册邮箱或手机号验证身份，重置密码</p>
+
+    <div class="form-group">
+      <label for="fp-contact">手机号 / 邮箱</label>
+      <div class="input-group">
+        <input class="form-control" id="fp-contact" type="text" placeholder="请输入注册时使用的手机号或邮箱" autocomplete="username" />
+        <button class="btn-send-code" id="fp-code-btn" onclick="sendCode('forgot')">发送验证码</button>
+      </div>
+      <div id="fp-code-hint" class="field-hint"></div>
+    </div>
+    <div class="form-group">
+      <label for="fp-code">验证码</label>
+      <input class="form-control" id="fp-code" type="text" placeholder="请输入6位验证码" maxlength="6" autocomplete="one-time-code" />
+    </div>
+    <div class="form-group">
+      <label for="fp-password">新密码</label>
+      <input class="form-control" id="fp-password" type="password" placeholder="至少6位新密码" autocomplete="new-password" />
+    </div>
+    <div class="form-group">
+      <label for="fp-password2">确认新密码</label>
+      <input class="form-control" id="fp-password2" type="password" placeholder="再次输入新密码" autocomplete="new-password" />
+    </div>
+
+    <button class="btn-primary-full" onclick="doResetPassword()">重置密码</button>
+
+    <hr class="modal-divider" />
+    <div class="modal-footer">
+      想起来了？<a onclick="switchModal('forgot','login')">返回登录</a>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
 <script>
-  // ── Data ──────────────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+  // ── Utilities ─────────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+
+  function escHtml(str) {
+    if (str == null) return "";
+    return String(str)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+
+  // SHA-256 via Web Crypto (returns hex string, async).
+  async function sha256(text) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+  }
+
+  function showToast(msg, type = "info", duration = 3500) {
+    const wrap = document.getElementById("toast-wrap");
+    const div = document.createElement("div");
+    div.className = `toast ${type}`;
+    div.textContent = msg;
+    wrap.appendChild(div);
+    setTimeout(() => div.remove(), duration);
+  }
+
+  function now() {
+    const d = new Date();
+    return `${d.getHours().toString().padStart(2,"0")}:${d.getMinutes().toString().padStart(2,"0")}`;
+  }
+
+  // ── Simple contact validation ──
+  function isEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
+  function isPhone(s) { return /^1[3-9]\d{9}$/.test(s); }
+  function isValidContact(s) { return isEmail(s) || isPhone(s); }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // ── Auth – localStorage persistence ──────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+
+  const USERS_KEY   = "fb_users_v1";
+  const SESSION_KEY = "fb_session_v1";
+  const CODES_KEY   = "fb_vcodes_v1";
+  const CODE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+  function getUsers()   { try { return JSON.parse(localStorage.getItem(USERS_KEY)   || "[]"); } catch { return []; } }
+  function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+
+  function getSession()   { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null"); } catch { return null; } }
+  function saveSession(s) { sessionStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
+  function clearSession() { sessionStorage.removeItem(SESSION_KEY); }
+
+  function getCodes()   { try { return JSON.parse(sessionStorage.getItem(CODES_KEY) || "{}"); } catch { return {}; } }
+  function saveCodes(c) { sessionStorage.setItem(CODES_KEY, JSON.stringify(c)); }
+
+  let currentUser = getSession(); // {id, contact, nickname}
+
+  // ── Verification code helpers ──────────────────────────────────────────
+  function storeCode(contact, code) {
+    const codes = getCodes();
+    codes[contact] = { code, expires: Date.now() + CODE_TTL_MS };
+    saveCodes(codes);
+  }
+
+  function verifyCode(contact, inputCode) {
+    const codes = getCodes();
+    const entry = codes[contact];
+    if (!entry) return false;
+    if (Date.now() > entry.expires) { delete codes[contact]; saveCodes(codes); return false; }
+    return String(entry.code) === String(inputCode).trim();
+  }
+
+  function consumeCode(contact) {
+    const codes = getCodes();
+    delete codes[contact];
+    saveCodes(codes);
+  }
+
+  // Generate and "send" a code (demo: displays it on screen).
+  function generateCode(contact) {
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    storeCode(contact, code);
+    return code;
+  }
+
+  // ── Countdown helper ──────────────────────────────────────────────────
+  function startCountdown(btnId, hintId, contact, code) {
+    const btn  = document.getElementById(btnId);
+    const hint = document.getElementById(hintId);
+    let secs = 60;
+    btn.disabled = true;
+    hint.innerHTML = `验证码已发送至 <strong>${escHtml(contact)}</strong>
+      <br><span class="field-hint code-demo">【演示】验证码：${escHtml(code)}</span>`;
+    const iv = setInterval(() => {
+      secs--;
+      btn.textContent = `重新发送(${secs}s)`;
+      if (secs <= 0) {
+        clearInterval(iv);
+        btn.disabled = false;
+        btn.textContent = "发送验证码";
+      }
+    }, 1000);
+  }
+
+  // ── Send Code (for register or forgot) ────────────────────────────────
+  function sendCode(mode) {
+    const contactId = mode === "register" ? "reg-contact" : "fp-contact";
+    const btnId     = mode === "register" ? "reg-code-btn" : "fp-code-btn";
+    const hintId    = mode === "register" ? "reg-code-hint" : "fp-code-hint";
+    const contact   = document.getElementById(contactId).value.trim();
+
+    if (!isValidContact(contact)) {
+      showToast("请输入有效的手机号（11位）或邮箱地址", "error");
+      document.getElementById(contactId).classList.add("error");
+      return;
+    }
+    document.getElementById(contactId).classList.remove("error");
+
+    const users = getUsers();
+    if (mode === "register" && users.some(u => u.contact === contact)) {
+      showToast("该手机号/邮箱已注册，请直接登录", "error");
+      return;
+    }
+    if (mode === "forgot" && !users.some(u => u.contact === contact)) {
+      showToast("该手机号/邮箱未注册，请先注册账号", "error");
+      return;
+    }
+
+    const code = generateCode(contact);
+    startCountdown(btnId, hintId, contact, code);
+  }
+
+  // ── Register ──────────────────────────────────────────────────────────
+  async function doRegister() {
+    const contact   = document.getElementById("reg-contact").value.trim();
+    const code      = document.getElementById("reg-code").value.trim();
+    const nickname  = document.getElementById("reg-nickname").value.trim();
+    const password  = document.getElementById("reg-password").value;
+    const password2 = document.getElementById("reg-password2").value;
+
+    if (!isValidContact(contact)) { showToast("请输入有效的手机号或邮箱", "error"); return; }
+    if (!code)                    { showToast("请输入验证码", "error"); return; }
+    if (!verifyCode(contact, code))  { showToast("验证码错误或已过期，请重新发送", "error"); return; }
+    if (!nickname || nickname.length < 2) { showToast("昵称不能少于2个字符", "error"); return; }
+    if (password.length < 6)     { showToast("密码不能少于6位", "error"); return; }
+    if (password !== password2)  { showToast("两次输入的密码不一致", "error"); return; }
+
+    const users = getUsers();
+    if (users.some(u => u.contact === contact)) {
+      showToast("该账号已注册，请直接登录", "error"); return;
+    }
+
+    const hash = await sha256(password);
+    const user = { id: Date.now().toString(36), contact, nickname, passwordHash: hash };
+    users.push(user);
+    saveUsers(users);
+    consumeCode(contact);
+
+    currentUser = { id: user.id, contact: user.contact, nickname: user.nickname };
+    saveSession(currentUser);
+
+    closeModal("register");
+    showToast(`注册成功！欢迎，${nickname} 🎉`, "success");
+    renderAuthHeader();
+    renderPostArea();
+  }
+
+  // ── Login ─────────────────────────────────────────────────────────────
+  async function doLogin() {
+    const contact  = document.getElementById("login-contact").value.trim();
+    const password = document.getElementById("login-password").value;
+
+    if (!contact || !password) { showToast("请填写账号和密码", "error"); return; }
+
+    const hash  = await sha256(password);
+    const users = getUsers();
+    const user  = users.find(u => u.contact === contact && u.passwordHash === hash);
+
+    if (!user) {
+      showToast("账号或密码错误，请重试", "error");
+      document.getElementById("login-password").value = "";
+      return;
+    }
+
+    currentUser = { id: user.id, contact: user.contact, nickname: user.nickname };
+    saveSession(currentUser);
+
+    closeModal("login");
+    showToast(`登录成功！欢迎回来，${user.nickname} ⚽`, "success");
+    renderAuthHeader();
+    renderPostArea();
+  }
+
+  // ── Reset Password ────────────────────────────────────────────────────
+  async function doResetPassword() {
+    const contact   = document.getElementById("fp-contact").value.trim();
+    const code      = document.getElementById("fp-code").value.trim();
+    const password  = document.getElementById("fp-password").value;
+    const password2 = document.getElementById("fp-password2").value;
+
+    if (!isValidContact(contact)) { showToast("请输入有效的手机号或邮箱", "error"); return; }
+    if (!code)                    { showToast("请输入验证码", "error"); return; }
+    if (!verifyCode(contact, code))  { showToast("验证码错误或已过期，请重新发送", "error"); return; }
+    if (password.length < 6)     { showToast("新密码不能少于6位", "error"); return; }
+    if (password !== password2)  { showToast("两次输入的密码不一致", "error"); return; }
+
+    const users = getUsers();
+    const idx   = users.findIndex(u => u.contact === contact);
+    if (idx === -1) { showToast("该账号不存在，请先注册", "error"); return; }
+
+    users[idx].passwordHash = await sha256(password);
+    saveUsers(users);
+    consumeCode(contact);
+
+    closeModal("forgot");
+    showToast("密码重置成功！请用新密码登录", "success");
+    openModal("login");
+  }
+
+  // ── Logout ────────────────────────────────────────────────────────────
+  function doLogout() {
+    clearSession();
+    currentUser = null;
+    showToast("已退出登录", "info");
+    renderAuthHeader();
+    renderPostArea();
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // ── Modal helpers ─────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+
+  function openModal(name) {
+    const el = document.getElementById(`modal-${name}`);
+    if (el) { el.classList.remove("hidden"); el.querySelector(".form-control")?.focus?.(); }
+  }
+  function closeModal(name) {
+    const el = document.getElementById(`modal-${name}`);
+    if (el) el.classList.add("hidden");
+  }
+  function switchModal(from, to) { closeModal(from); openModal(to); }
+
+  // Close on backdrop click.
+  document.querySelectorAll(".modal-overlay").forEach(overlay => {
+    overlay.addEventListener("click", e => {
+      if (e.target === overlay) {
+        const name = overlay.id.replace("modal-","");
+        closeModal(name);
+      }
+    });
+  });
+
+  // Close on Escape.
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      ["login","register","forgot"].forEach(closeModal);
+    }
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // ── Render: Auth Header ────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+
+  function renderAuthHeader() {
+    const el = document.getElementById("header-auth");
+    if (currentUser) {
+      el.innerHTML = `
+        <div class="user-info">
+          <div class="user-avatar-sm" style="background:${colorFor(currentUser.nickname)}">${escHtml(currentUser.nickname.charAt(0))}</div>
+          <span>${escHtml(currentUser.nickname)}</span>
+        </div>
+        <button class="btn-logout" onclick="doLogout()">退出</button>
+      `;
+    } else {
+      el.innerHTML = `
+        <button class="btn-auth" onclick="openModal('login')">登录</button>
+        <button class="btn-auth primary" onclick="openModal('register')">注册</button>
+      `;
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // ── Render: Post Area (login-gated) ───────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+
+  function renderPostArea() {
+    const el = document.getElementById("post-area");
+    if (currentUser) {
+      el.innerHTML = `
+        <div class="post-form">
+          <textarea id="comment-input" placeholder="分享你的看法、赛事分析或精彩时刻…"></textarea>
+          <div class="form-footer">
+            <button class="btn-submit" id="submit-btn">发表评论</button>
+          </div>
+        </div>
+      `;
+      document.getElementById("submit-btn").addEventListener("click", submitComment);
+      document.getElementById("comment-input").addEventListener("keydown", e => {
+        if (e.ctrlKey && e.key === "Enter") submitComment();
+      });
+    } else {
+      el.innerHTML = `
+        <div class="login-gate">
+          <p>🔒 请登录后参与讨论，分享你的精彩观点！</p>
+          <div class="login-gate-btns">
+            <button class="btn-auth" onclick="openModal('login')" style="font-size:14px;padding:7px 20px">登录</button>
+            <button class="btn-auth primary" onclick="openModal('register')" style="font-size:14px;padding:7px 20px">立即注册</button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // ── Live Video ─────────────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // Channel source URLs (using publicly embeddable YouTube search pages as demo).
+  // In production, replace with actual licensed stream URLs.
+  const channels = [
+    { label: "欧冠直播 1", src: "https://www.youtube.com/embed/live_stream?channel=UCxIqCILSeFmHMGXAQ8M9-qA&autoplay=1" },
+    { label: "欧冠直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UCBcRF18a7Qf58cCRy5xuWwQ&autoplay=1" },
+    { label: "欧冠直播 3", src: "https://www.youtube.com/embed/live_stream?channel=UC29ju8bIPH5as8OGnQzwJyA&autoplay=1" },
+    { label: "欧冠精彩集锦", src: "https://www.youtube.com/embed?listType=search&list=UEFA+Champions+League+highlights" },
+  ];
+  let activeChannel = 0;
+  let streamStarted = false;
+
+  function selectChannel(idx) {
+    activeChannel = idx;
+    document.querySelectorAll(".btn-channel").forEach((btn, i) => {
+      btn.classList.toggle("active", i === idx);
+    });
+    if (streamStarted) loadStream(idx);
+  }
+
+  function loadStream(idx) {
+    const iframe = document.getElementById("live-iframe");
+    const placeholder = document.getElementById("video-placeholder");
+    iframe.src = channels[idx].src;
+    iframe.style.display = "block";
+    placeholder.style.display = "none";
+    streamStarted = true;
+  }
+
+  function startStream() { loadStream(activeChannel); }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // ── Match / Stats / Trending Data ─────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════════
+
   const matches = [
     { id: 1, home: "曼城", away: "皇马", scoreH: 2, scoreA: 1, mins: 67, league: "欧冠", live: true },
     { id: 2, home: "巴萨", away: "拜仁", scoreH: 1, scoreA: 1, mins: 45, league: "欧冠", live: true },
@@ -375,12 +1267,12 @@
     el.innerHTML = matches.map(m => `
       <div class="match${m.live ? " active" : ""}" data-id="${m.id}" onclick="selectMatch(${m.id})">
         <div class="match-teams">
-          <span class="team">${m.home}</span>
+          <span class="team">${escHtml(m.home)}</span>
           <span class="score">${m.scoreH} - ${m.scoreA}</span>
-          <span class="team">${m.away}</span>
+          <span class="team">${escHtml(m.away)}</span>
         </div>
         <div class="match-meta">
-          <div>${m.league}</div>
+          <div>${escHtml(m.league)}</div>
           ${m.live
             ? `<div class="live">● 直播</div><div class="mins">${m.mins}'</div>`
             : `<div style="color:#3fb950">完场</div>`}
@@ -410,9 +1302,9 @@
     const m = matches.find(x => x.id === selectedMatch);
     el.innerHTML = `
       <div style="display:flex;justify-content:space-between;font-size:12px;color:#8b949e;margin-bottom:12px">
-        <span style="font-weight:700;color:#e6edf3">${m.home}</span>
+        <span style="font-weight:700;color:#e6edf3">${escHtml(m.home)}</span>
         <span>数据对比</span>
-        <span style="font-weight:700;color:#e6edf3">${m.away}</span>
+        <span style="font-weight:700;color:#e6edf3">${escHtml(m.away)}</span>
       </div>
       ${data.map(s => {
         const total = s.home + s.away || 1;
@@ -422,7 +1314,7 @@
           <div class="stat-row">
             <span class="stat-val">${s.label === "控球率" ? s.home + "%" : s.home}</span>
             <div style="flex:1;display:flex;flex-direction:column;gap:3px">
-              <div style="font-size:11px;text-align:center;color:#8b949e">${s.label}</div>
+              <div style="font-size:11px;text-align:center;color:#8b949e">${escHtml(s.label)}</div>
               <div style="display:flex;gap:3px">
                 <div class="stat-bar" style="flex:1"><div class="stat-bar-fill" style="width:${homePct}%"></div></div>
                 <div class="stat-bar" style="flex:1"><div class="stat-bar-fill away" style="width:${awayPct}%;margin-left:auto"></div></div>
@@ -441,15 +1333,15 @@
     el.innerHTML = trending.map((t, i) => `
       <div class="trending-item">
         <span class="trending-rank${i < 3 ? " top3" : ""}">${i + 1}</span>
-        <span class="trending-text">${t.text}</span>
-        <span class="trending-count">${t.count}</span>
+        <span class="trending-text">${escHtml(t.text)}</span>
+        <span class="trending-count">${escHtml(t.count)}</span>
       </div>
     `).join("");
   }
 
   // ── Render Comments ───────────────────────────────────────────────────────
   function renderComments() {
-    const el = document.getElementById("comment-list");
+    const el    = document.getElementById("comment-list");
     const count = document.getElementById("comment-count");
     count.textContent = `(${comments.length})`;
 
@@ -461,7 +1353,7 @@
     el.innerHTML = comments.slice().reverse().map(c => `
       <div class="comment" id="cmt-${c.id}">
         <div class="comment-header">
-          <div class="avatar" style="background:${colorFor(c.author)}">${c.author.charAt(0)}</div>
+          <div class="avatar" style="background:${colorFor(c.author)}">${escHtml(c.author.charAt(0))}</div>
           <span class="comment-author">${escHtml(c.author)}</span>
           <span class="comment-time">${escHtml(c.time)}</span>
         </div>
@@ -475,11 +1367,6 @@
     `).join("");
   }
 
-  function escHtml(str) {
-    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-              .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
-  }
-
   // ── Like ──────────────────────────────────────────────────────────────────
   function toggleLike(id) {
     const c = comments.find(x => x.id === id);
@@ -490,27 +1377,15 @@
   }
 
   // ── Submit Comment ────────────────────────────────────────────────────────
-  document.getElementById("submit-btn").addEventListener("click", submitComment);
-  document.getElementById("comment-input").addEventListener("keydown", e => {
-    if (e.ctrlKey && e.key === "Enter") submitComment();
-  });
-
-  function now() {
-    const d = new Date();
-    return `${d.getHours().toString().padStart(2,"0")}:${d.getMinutes().toString().padStart(2,"0")}`;
-  }
-
   let nextId = seedComments.length + 1;
   function submitComment() {
-    const text = document.getElementById("comment-input").value.trim();
-    const raw  = document.getElementById("name-input").value.trim();
-    const author = raw || "匿名球迷";
-    if (!text) {
-      document.getElementById("comment-input").focus();
-      return;
-    }
-    comments.push({ id: nextId++, author, text, time: now(), likes: 0, liked: false });
-    document.getElementById("comment-input").value = "";
+    if (!currentUser) { openModal("login"); return; }
+    const textEl = document.getElementById("comment-input");
+    if (!textEl) return;
+    const text = textEl.value.trim();
+    if (!text) { textEl.focus(); return; }
+    comments.push({ id: nextId++, author: currentUser.nickname, text, time: now(), likes: 0, liked: false });
+    textEl.value = "";
     renderComments();
     const firstComment = document.getElementById("comment-list").firstElementChild;
     if (firstComment) firstComment.scrollIntoView({ behavior: "smooth" });
@@ -525,6 +1400,8 @@
   }, 60000);
 
   // ── Init ──────────────────────────────────────────────────────────────────
+  renderAuthHeader();
+  renderPostArea();
   renderMatches();
   renderStats();
   renderTrending();
