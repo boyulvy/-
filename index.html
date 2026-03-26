@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>足球转播讨论页</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #1a6e2e 0%, #0f4a1e 100%);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.5);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header .logo { font-size: 28px; }
+    header h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+    header .live-badge {
+      margin-left: auto;
+      background: #e63946;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: .5; }
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .card-header {
+      background: #21262d;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      border-bottom: 1px solid #30363d;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Match Cards ── */
+    .match {
+      padding: 14px 16px;
+      border-bottom: 1px solid #21262d;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background .15s;
+      cursor: pointer;
+    }
+    .match:last-child { border-bottom: none; }
+    .match:hover { background: #1c2128; }
+    .match.active { border-left: 3px solid #3fb950; }
+    .match-teams {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .team { font-size: 15px; font-weight: 600; white-space: nowrap; }
+    .score {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #f0f6fc;
+      min-width: 64px;
+      text-align: center;
+    }
+    .match-meta {
+      text-align: right;
+      font-size: 12px;
+      color: #8b949e;
+      min-width: 56px;
+    }
+    .match-meta .live { color: #e63946; font-weight: 700; }
+    .match-meta .mins { color: #3fb950; font-weight: 600; }
+
+    /* ── Discussion ── */
+    .discussion-main { display: flex; flex-direction: column; gap: 16px; }
+
+    .post-form { padding: 16px; }
+    .post-form textarea {
+      width: 100%;
+      min-height: 80px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-size: 14px;
+      font-family: inherit;
+      padding: 10px 12px;
+      resize: vertical;
+      transition: border-color .15s;
+      outline: none;
+    }
+    .post-form textarea:focus { border-color: #3fb950; }
+    .post-form .form-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .post-form .name-input {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #e6edf3;
+      font-size: 13px;
+      font-family: inherit;
+      padding: 6px 10px;
+      width: 160px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .post-form .name-input:focus { border-color: #3fb950; }
+    .btn-submit {
+      background: #238636;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-submit:hover { background: #2ea043; }
+    .btn-submit:active { background: #1a7f37; }
+
+    /* ── Comment List ── */
+    .comments { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+    .comment {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 12px 14px;
+      animation: fadeIn .3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .comment-author { font-size: 13px; font-weight: 600; color: #58a6ff; }
+    .comment-time { font-size: 11px; color: #484f58; margin-left: auto; }
+    .comment-body { font-size: 14px; line-height: 1.6; color: #c9d1d9; word-break: break-word; }
+    .comment-actions { margin-top: 6px; display: flex; gap: 12px; }
+    .btn-like {
+      background: none;
+      border: none;
+      color: #8b949e;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color .15s;
+    }
+    .btn-like:hover { color: #e63946; }
+    .btn-like.liked { color: #e63946; }
+
+    /* ── Sidebar ── */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+    .match-stats { padding: 14px 16px; font-size: 13px; }
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .stat-label { color: #8b949e; min-width: 64px; font-size: 12px; }
+    .stat-bar { flex: 1; height: 6px; background: #21262d; border-radius: 3px; overflow: hidden; }
+    .stat-bar-fill { height: 100%; border-radius: 3px; background: #3fb950; transition: width .4s ease; }
+    .stat-bar-fill.away { background: #58a6ff; }
+    .stat-val { min-width: 32px; text-align: right; font-size: 12px; color: #c9d1d9; }
+
+    .trending { padding: 0 0 8px; }
+    .trending-item {
+      padding: 10px 16px;
+      border-bottom: 1px solid #21262d;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background .15s;
+      cursor: pointer;
+    }
+    .trending-item:last-child { border-bottom: none; }
+    .trending-item:hover { background: #1c2128; }
+    .trending-rank {
+      font-size: 16px;
+      font-weight: 700;
+      color: #484f58;
+      min-width: 20px;
+      text-align: center;
+    }
+    .trending-rank.top3 { color: #e63946; }
+    .trending-text { flex: 1; color: #c9d1d9; }
+    .trending-count { font-size: 11px; color: #8b949e; }
+
+    /* ── Empty state ── */
+    .empty { text-align: center; color: #484f58; padding: 32px 16px; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="logo">⚽</span>
+  <h1>足球转播讨论页</h1>
+  <span class="live-badge">● 直播中</span>
+</header>
+
+<div class="container">
+
+  <!-- ── Left Column ── -->
+  <div class="discussion-main">
+
+    <!-- Match List -->
+    <div class="card">
+      <div class="card-header">📡 正在直播</div>
+      <div id="match-list"></div>
+    </div>
+
+    <!-- Post Form -->
+    <div class="card">
+      <div class="card-header">💬 发表评论</div>
+      <div class="post-form">
+        <textarea id="comment-input" placeholder="分享你的看法、赛事分析或精彩时刻…"></textarea>
+        <div class="form-footer">
+          <input class="name-input" id="name-input" type="text" placeholder="昵称（可选）" maxlength="20" />
+          <button class="btn-submit" id="submit-btn">发表评论</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comments -->
+    <div class="card">
+      <div class="card-header">🗨️ 讨论区 <span id="comment-count" style="color:#3fb950;margin-left:4px"></span></div>
+      <div class="comments" id="comment-list"></div>
+    </div>
+
+  </div>
+
+  <!-- ── Right Sidebar ── -->
+  <div class="sidebar">
+
+    <!-- Match Stats -->
+    <div class="card">
+      <div class="card-header">📊 实时数据</div>
+      <div class="match-stats" id="stats-panel"></div>
+    </div>
+
+    <!-- Trending Topics -->
+    <div class="card">
+      <div class="card-header">🔥 热议话题</div>
+      <div class="trending" id="trending-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── Data ──────────────────────────────────────────────────────────────────
+  const matches = [
+    { id: 1, home: "曼城", away: "皇马", scoreH: 2, scoreA: 1, mins: 67, league: "欧冠", live: true },
+    { id: 2, home: "巴萨", away: "拜仁", scoreH: 1, scoreA: 1, mins: 45, league: "欧冠", live: true },
+    { id: 3, home: "利物浦", away: "多特", scoreH: 0, scoreA: 0, mins: 12, league: "欧冠", live: true },
+    { id: 4, home: "阿森纳", away: "AC米兰", scoreH: 3, scoreA: 0, mins: 90, league: "欧冠", live: false },
+  ];
+
+  const stats = {
+    1: [
+      { label: "控球率", home: 58, away: 42 },
+      { label: "射门", home: 11, away: 7 },
+      { label: "射正", home: 5,  away: 3 },
+      { label: "角球", home: 6,  away: 4 },
+      { label: "犯规", home: 8,  away: 12 },
+    ],
+  };
+
+  const trending = [
+    { text: "曼城2-1皇马 哈兰德梅开二度", count: "4.2万热议" },
+    { text: "巴萨vs拜仁 1-1 莱万进球破门", count: "3.1万热议" },
+    { text: "利物浦新帅首秀 欧冠首战", count: "2.8万热议" },
+    { text: "欧冠四强预测", count: "1.9万热议" },
+    { text: "阿森纳3-0大胜 米兰惨败", count: "1.5万热议" },
+  ];
+
+  const seedComments = [
+    { author: "球迷老王", text: "哈兰德今晚状态真的太好了，两脚射门都打在死角！皇马防线完全没有办法！", time: "67分钟", likes: 42 },
+    { author: "战术分析师", text: "曼城这场的高位逼抢效果显著，基本上掐断了皇马从中场的出球线路，瓜帅布置得很到位。", time: "65分钟", likes: 31 },
+    { author: "欧冠看客", text: "皇马中场失误太多了，维尼修斯单独对抗又被盯死，很难在下半场追回来。", time: "63分钟", likes: 18 },
+    { author: "夜猫球迷", text: "巴萨那边1-1平，莱万进球虽然好看，但防守真的堪忧，弗里克还需要磨合。", time: "58分钟", likes: 24 },
+  ];
+
+  const avatarColors = [
+    "#e63946","#457b9d","#2a9d8f","#e9c46a","#f4a261","#264653","#6d6875","#b5838d",
+  ];
+
+  // Simple djb2-style hash to pick a stable avatar color from a name string.
+  const HASH_MULTIPLIER = 31;
+  const HASH_MASK = 0xffffffff;
+  function colorFor(name) {
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * HASH_MULTIPLIER + name.charCodeAt(i)) & HASH_MASK;
+    return avatarColors[Math.abs(h) % avatarColors.length];
+  }
+
+  let comments = seedComments.map((c, i) => ({ ...c, id: i + 1, liked: false }));
+
+  // ── Render Matches ────────────────────────────────────────────────────────
+  function renderMatches() {
+    const el = document.getElementById("match-list");
+    el.innerHTML = matches.map(m => `
+      <div class="match${m.live ? " active" : ""}" data-id="${m.id}" onclick="selectMatch(${m.id})">
+        <div class="match-teams">
+          <span class="team">${m.home}</span>
+          <span class="score">${m.scoreH} - ${m.scoreA}</span>
+          <span class="team">${m.away}</span>
+        </div>
+        <div class="match-meta">
+          <div>${m.league}</div>
+          ${m.live
+            ? `<div class="live">● 直播</div><div class="mins">${m.mins}'</div>`
+            : `<div style="color:#3fb950">完场</div>`}
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // ── Render Stats ──────────────────────────────────────────────────────────
+  let selectedMatch = 1;
+  function selectMatch(id) {
+    selectedMatch = id;
+    renderMatches();
+    renderStats();
+    document.querySelectorAll(".match").forEach(el => {
+      el.classList.toggle("active", Number(el.dataset.id) === id);
+    });
+  }
+
+  function renderStats() {
+    const el = document.getElementById("stats-panel");
+    const data = stats[selectedMatch];
+    if (!data) {
+      el.innerHTML = '<div class="empty">暂无数据</div>';
+      return;
+    }
+    const m = matches.find(x => x.id === selectedMatch);
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#8b949e;margin-bottom:12px">
+        <span style="font-weight:700;color:#e6edf3">${m.home}</span>
+        <span>数据对比</span>
+        <span style="font-weight:700;color:#e6edf3">${m.away}</span>
+      </div>
+      ${data.map(s => {
+        const total = s.home + s.away || 1;
+        const homePct = Math.round(s.home / total * 100);
+        const awayPct = 100 - homePct;
+        return `
+          <div class="stat-row">
+            <span class="stat-val">${s.label === "控球率" ? s.home + "%" : s.home}</span>
+            <div style="flex:1;display:flex;flex-direction:column;gap:3px">
+              <div style="font-size:11px;text-align:center;color:#8b949e">${s.label}</div>
+              <div style="display:flex;gap:3px">
+                <div class="stat-bar" style="flex:1"><div class="stat-bar-fill" style="width:${homePct}%"></div></div>
+                <div class="stat-bar" style="flex:1"><div class="stat-bar-fill away" style="width:${awayPct}%;margin-left:auto"></div></div>
+              </div>
+            </div>
+            <span class="stat-val">${s.label === "控球率" ? s.away + "%" : s.away}</span>
+          </div>
+        `;
+      }).join("")}
+    `;
+  }
+
+  // ── Render Trending ───────────────────────────────────────────────────────
+  function renderTrending() {
+    const el = document.getElementById("trending-list");
+    el.innerHTML = trending.map((t, i) => `
+      <div class="trending-item">
+        <span class="trending-rank${i < 3 ? " top3" : ""}">${i + 1}</span>
+        <span class="trending-text">${t.text}</span>
+        <span class="trending-count">${t.count}</span>
+      </div>
+    `).join("");
+  }
+
+  // ── Render Comments ───────────────────────────────────────────────────────
+  function renderComments() {
+    const el = document.getElementById("comment-list");
+    const count = document.getElementById("comment-count");
+    count.textContent = `(${comments.length})`;
+
+    if (!comments.length) {
+      el.innerHTML = '<div class="empty">暂无评论，来发表第一条吧！</div>';
+      return;
+    }
+
+    el.innerHTML = comments.slice().reverse().map(c => `
+      <div class="comment" id="cmt-${c.id}">
+        <div class="comment-header">
+          <div class="avatar" style="background:${colorFor(c.author)}">${c.author.charAt(0)}</div>
+          <span class="comment-author">${escHtml(c.author)}</span>
+          <span class="comment-time">${escHtml(c.time)}</span>
+        </div>
+        <div class="comment-body">${escHtml(c.text)}</div>
+        <div class="comment-actions">
+          <button class="btn-like${c.liked ? " liked" : ""}" onclick="toggleLike(${c.id})">
+            ❤ <span>${c.likes}</span>
+          </button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+              .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+
+  // ── Like ──────────────────────────────────────────────────────────────────
+  function toggleLike(id) {
+    const c = comments.find(x => x.id === id);
+    if (!c) return;
+    c.liked = !c.liked;
+    c.likes += c.liked ? 1 : -1;
+    renderComments();
+  }
+
+  // ── Submit Comment ────────────────────────────────────────────────────────
+  document.getElementById("submit-btn").addEventListener("click", submitComment);
+  document.getElementById("comment-input").addEventListener("keydown", e => {
+    if (e.ctrlKey && e.key === "Enter") submitComment();
+  });
+
+  function now() {
+    const d = new Date();
+    return `${d.getHours().toString().padStart(2,"0")}:${d.getMinutes().toString().padStart(2,"0")}`;
+  }
+
+  let nextId = seedComments.length + 1;
+  function submitComment() {
+    const text = document.getElementById("comment-input").value.trim();
+    const raw  = document.getElementById("name-input").value.trim();
+    const author = raw || "匿名球迷";
+    if (!text) {
+      document.getElementById("comment-input").focus();
+      return;
+    }
+    comments.push({ id: nextId++, author, text, time: now(), likes: 0, liked: false });
+    document.getElementById("comment-input").value = "";
+    renderComments();
+    const firstComment = document.getElementById("comment-list").firstElementChild;
+    if (firstComment) firstComment.scrollIntoView({ behavior: "smooth" });
+  }
+
+  const MAX_MATCH_MINUTES = 90;
+
+  // ── Live Clock ────────────────────────────────────────────────────────────
+  setInterval(() => {
+    matches.forEach(m => { if (m.live && m.mins < MAX_MATCH_MINUTES) m.mins++; });
+    renderMatches();
+  }, 60000);
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  renderMatches();
+  renderStats();
+  renderTrending();
+  renderComments();
+</script>
+</body>
+</html>
