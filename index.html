@@ -206,6 +206,88 @@
     .btn-channel:hover { background: #2d333b; }
     .btn-channel.active { background: #1a6e2e; border-color: #3fb950; color: #fff; }
 
+    /* ── Competition Tabs ── */
+    .comp-tabs {
+      display: flex;
+      gap: 6px;
+      padding: 10px 16px 0;
+      flex-wrap: wrap;
+      border-top: 1px solid #21262d;
+    }
+    .btn-comp {
+      background: #161b22;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      border-radius: 20px;
+      padding: 5px 13px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .btn-comp:hover { background: #21262d; color: #c9d1d9; }
+    .btn-comp.active {
+      background: #0d2818;
+      border-color: #3fb950;
+      color: #3fb950;
+      font-weight: 600;
+    }
+    /* ── Region Selector ── */
+    .region-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px 0;
+      flex-wrap: wrap;
+    }
+    .region-label {
+      font-size: 12px;
+      color: #8b949e;
+      white-space: nowrap;
+    }
+    .btn-region {
+      background: #161b22;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+    .btn-region:hover { background: #21262d; color: #c9d1d9; }
+    .btn-region.active {
+      background: #162032;
+      border-color: #388bfd;
+      color: #58a6ff;
+      font-weight: 600;
+    }
+    /* ── FIFA+ Live Link ── */
+    .fifa-live-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 6px 16px 8px;
+      gap: 8px;
+    }
+    .btn-fifa-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(90deg,#1a6e2e,#1565c0);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .btn-fifa-live:hover { opacity: .85; }
+
     /* ── Match Cards ── */
     .match {
       padding: 14px 16px;
@@ -634,11 +716,20 @@
           src="about:blank">
         </iframe>
       </div>
-      <div class="video-select" id="channel-btns">
-        <button class="btn-channel active" data-ch="0" onclick="selectChannel(0)">🔴 欧冠直播 1</button>
-        <button class="btn-channel" data-ch="1" onclick="selectChannel(1)">🟡 欧冠直播 2</button>
-        <button class="btn-channel" data-ch="2" onclick="selectChannel(2)">🔵 欧冠直播 3</button>
-        <button class="btn-channel" data-ch="3" onclick="selectChannel(3)">⚪ 欧冠精彩集锦</button>
+      <!-- Competition category tabs (from FIFA+ live schedule) -->
+      <div class="comp-tabs" id="comp-tabs"></div>
+      <!-- Region selector (shown only when competition has regions) -->
+      <div class="region-row" id="region-row" style="display:none">
+        <span class="region-label">🌐 选择赛区：</span>
+        <div id="region-btns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+      </div>
+      <!-- Channel buttons -->
+      <div class="video-select" id="channel-btns"></div>
+      <!-- FIFA+ live schedule link -->
+      <div class="fifa-live-bar">
+        <a id="fifa-live-link" class="btn-fifa-live" href="https://www.plus.fifa.com/en/live-schedule/competitions" target="_blank" rel="noopener noreferrer">
+          🔗 在 FIFA+ 上观看
+        </a>
       </div>
     </div>
 
@@ -1180,30 +1271,226 @@
   // ── Live Video ─────────────────────────────────────────────────────────────
   // ══════════════════════════════════════════════════════════════════════════
 
-  // Channel source URLs (using publicly embeddable YouTube search pages as demo).
-  // In production, replace with actual licensed stream URLs.
-  const channels = [
-    { label: "欧冠直播 1", src: "https://www.youtube.com/embed/live_stream?channel=UCxIqCILSeFmHMGXAQ8M9-qA&autoplay=1" },
-    { label: "欧冠直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UCBcRF18a7Qf58cCRy5xuWwQ&autoplay=1" },
-    { label: "欧冠直播 3", src: "https://www.youtube.com/embed/live_stream?channel=UC29ju8bIPH5as8OGnQzwJyA&autoplay=1" },
-    { label: "欧冠精彩集锦", src: "https://www.youtube.com/embed?listType=search&list=UEFA+Champions+League+highlights" },
+  // Competitions from https://www.plus.fifa.com/en/live-schedule/competitions
+  // Each competition can have one or more regions (confederations).
+  // channels[compId][regionId] = array of { label, src }
+  // fifaUrl: the FIFA+ catalogue/live page for this competition.
+  // In production, replace src values with actual licensed stream URLs.
+
+  const COMPETITIONS = [
+    {
+      id: "cwc2025",
+      label: "FIFA 俱乐部世界杯 2025",
+      icon: "🏆",
+      fifaUrl: "https://www.plus.fifa.com/en/catalogue/fifa-club-world-cup",
+      regions: null,
+    },
+    {
+      id: "wc_qualifiers",
+      label: "2026 世界杯预选赛",
+      icon: "⚽",
+      fifaUrl: "https://www.plus.fifa.com/en/catalogue/fifa-world-cup-qualifiers",
+      regions: [
+        { id: "afc",      label: "🌏 亚足联 (AFC)" },
+        { id: "caf",      label: "🌍 非足联 (CAF)" },
+        { id: "concacaf", label: "🌎 北中美 (Concacaf)" },
+        { id: "conmebol", label: "🌎 南美足联 (CONMEBOL)" },
+        { id: "ofc",      label: "🌏 大洋洲 (OFC)" },
+        { id: "uefa",     label: "🌍 欧足联 (UEFA)" },
+      ],
+    },
+    {
+      id: "beach2025",
+      label: "FIFA 沙滩足球世界杯 2025",
+      icon: "🏄",
+      fifaUrl: "https://www.plus.fifa.com/en/catalogue/beach-soccer-world-cup",
+      regions: null,
+    },
+    {
+      id: "u20wc2025",
+      label: "FIFA U-20 世界杯 2025",
+      icon: "👦",
+      fifaUrl: "https://www.plus.fifa.com/en/catalogue/fifa-u-20-world-cup",
+      regions: null,
+    },
+    {
+      id: "arab2025",
+      label: "FIFA 阿拉伯杯 2025",
+      icon: "🌙",
+      fifaUrl: "https://www.plus.fifa.com/en/catalogue/fifa-arab-cup",
+      regions: null,
+    },
+    {
+      id: "intercup2025",
+      label: "FIFA 洲际杯 2025",
+      icon: "🔄",
+      fifaUrl: "https://www.plus.fifa.com/en/catalogue/fifa-intercontinental-cup",
+      regions: null,
+    },
   ];
-  let activeChannel = 0;
-  let streamStarted = false;
+
+  // Build a Map for O(1) competition lookups.
+  const COMP_MAP = new Map(COMPETITIONS.map(c => [c.id, c]));
+
+  // Channel streams per competition and region.
+  // Format: channels[compId] = [{ label, src }]  (no regions)
+  //         channels[compId][regionId] = [{ label, src }]  (with regions)
+  const CHANNELS = {
+    cwc2025: [
+      { label: "🔴 俱乐部世界杯 直播 1", src: "https://www.youtube.com/embed/live_stream?channel=UCxIqCILSeFmHMGXAQ8M9-qA&autoplay=1" },
+      { label: "🟡 俱乐部世界杯 直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UCBcRF18a7Qf58cCRy5xuWwQ&autoplay=1" },
+      { label: "⚪ 俱乐部世界杯 精彩集锦", src: "https://www.youtube.com/embed?listType=search&list=FIFA+Club+World+Cup+2025+highlights" },
+    ],
+    wc_qualifiers: {
+      afc:      [
+        { label: "🔴 亚预赛 直播 1", src: "https://www.youtube.com/embed?listType=search&list=AFC+World+Cup+Qualifier+2026+live" },
+        { label: "🟡 亚预赛 直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UCBcRF18a7Qf58cCRy5xuWwQ&autoplay=1" },
+      ],
+      caf:      [
+        { label: "🔴 非预赛 直播 1", src: "https://www.youtube.com/embed?listType=search&list=CAF+World+Cup+Qualifier+2026+live" },
+        { label: "🟡 非预赛 直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UC29ju8bIPH5as8OGnQzwJyA&autoplay=1" },
+      ],
+      concacaf: [
+        { label: "🔴 北中美预赛 直播 1", src: "https://www.youtube.com/embed?listType=search&list=Concacaf+World+Cup+Qualifier+2026+live" },
+        { label: "🟡 北中美预赛 直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UCxIqCILSeFmHMGXAQ8M9-qA&autoplay=1" },
+      ],
+      conmebol: [
+        { label: "🔴 南美预赛 直播 1", src: "https://www.youtube.com/embed?listType=search&list=CONMEBOL+World+Cup+Qualifier+2026+live" },
+        { label: "🟡 南美预赛 直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UCBcRF18a7Qf58cCRy5xuWwQ&autoplay=1" },
+      ],
+      ofc:      [
+        { label: "🔴 大洋洲预赛 直播", src: "https://www.youtube.com/embed?listType=search&list=OFC+World+Cup+Qualifier+2026+live" },
+      ],
+      uefa:     [
+        { label: "🔴 欧预赛 直播 1", src: "https://www.youtube.com/embed?listType=search&list=UEFA+World+Cup+Qualifier+2026+live" },
+        { label: "🟡 欧预赛 直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UC29ju8bIPH5as8OGnQzwJyA&autoplay=1" },
+        { label: "⚪ 欧预赛 精彩集锦", src: "https://www.youtube.com/embed?listType=search&list=UEFA+World+Cup+2026+qualifier+highlights" },
+      ],
+    },
+    beach2025: [
+      { label: "🔴 沙滩足球 直播 1", src: "https://www.youtube.com/embed?listType=search&list=FIFA+Beach+Soccer+World+Cup+2025+live" },
+      { label: "🟡 沙滩足球 直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UCxIqCILSeFmHMGXAQ8M9-qA&autoplay=1" },
+    ],
+    u20wc2025: [
+      { label: "🔴 U20世界杯 直播 1", src: "https://www.youtube.com/embed?listType=search&list=FIFA+U20+World+Cup+2025+live" },
+      { label: "🟡 U20世界杯 直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UCBcRF18a7Qf58cCRy5xuWwQ&autoplay=1" },
+      { label: "⚪ U20世界杯 集锦", src: "https://www.youtube.com/embed?listType=search&list=FIFA+U20+World+Cup+2025+highlights" },
+    ],
+    arab2025: [
+      { label: "🔴 阿拉伯杯 直播 1", src: "https://www.youtube.com/embed?listType=search&list=FIFA+Arab+Cup+2025+live" },
+      { label: "🟡 阿拉伯杯 直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UC29ju8bIPH5as8OGnQzwJyA&autoplay=1" },
+    ],
+    intercup2025: [
+      { label: "🔴 洲际杯 直播 1", src: "https://www.youtube.com/embed?listType=search&list=FIFA+Intercontinental+Cup+2025+live" },
+      { label: "🟡 洲际杯 直播 2", src: "https://www.youtube.com/embed/live_stream?channel=UCxIqCILSeFmHMGXAQ8M9-qA&autoplay=1" },
+    ],
+  };
+
+  let activeCompId  = COMPETITIONS[0].id;
+  let activeRegionId = null;
+  let activeChannel  = 0;
+  let streamStarted  = false;
+
+  function getActiveRegionId() {
+    const comp = COMP_MAP.get(activeCompId);
+    return (comp && comp.regions)
+      ? (activeRegionId || comp.regions[0].id)
+      : null;
+  }
+
+  function getActiveChannelList() {
+    const comp = COMP_MAP.get(activeCompId);
+    if (comp && comp.regions) {
+      const rid = getActiveRegionId();
+      return (CHANNELS[activeCompId] && CHANNELS[activeCompId][rid]) || [];
+    }
+    return CHANNELS[activeCompId] || [];
+  }
+
+  function renderCompTabs() {
+    const container = document.getElementById("comp-tabs");
+    container.innerHTML = COMPETITIONS.map(comp =>
+      `<button class="btn-comp${comp.id === activeCompId ? " active" : ""}"
+         onclick="selectComp('${comp.id}')">${comp.icon} ${comp.label}</button>`
+    ).join("");
+  }
+
+  function renderRegionRow() {
+    const comp = COMP_MAP.get(activeCompId);
+    const row  = document.getElementById("region-row");
+    const btns = document.getElementById("region-btns");
+    if (comp && comp.regions) {
+      const rid = getActiveRegionId();
+      btns.innerHTML = comp.regions.map(r =>
+        `<button class="btn-region${r.id === rid ? " active" : ""}"
+           onclick="selectRegion('${r.id}')">${r.label}</button>`
+      ).join("");
+      row.style.display = "flex";
+    } else {
+      row.style.display = "none";
+    }
+  }
+
+  function renderChannelBtns() {
+    const list      = getActiveChannelList();
+    const container = document.getElementById("channel-btns");
+    container.innerHTML = list.map((ch, i) =>
+      `<button class="btn-channel${i === activeChannel ? " active" : ""}"
+         onclick="selectChannel(${i})">${ch.label}</button>`
+    ).join("");
+  }
+
+  function renderFifaLink() {
+    const comp = COMP_MAP.get(activeCompId);
+    const link = document.getElementById("fifa-live-link");
+    if (comp) link.href = comp.fifaUrl;
+  }
+
+  function renderVideoPanel() {
+    renderCompTabs();
+    renderRegionRow();
+    renderChannelBtns();
+    renderFifaLink();
+  }
+
+  function selectComp(compId) {
+    activeCompId  = compId;
+    activeRegionId = null;
+    activeChannel  = 0;
+    streamStarted  = false;
+    const iframe      = document.getElementById("live-iframe");
+    const placeholder = document.getElementById("video-placeholder");
+    iframe.src          = "about:blank";
+    iframe.style.display  = "none";
+    placeholder.style.display = "";
+    renderVideoPanel();
+  }
+
+  function selectRegion(regionId) {
+    activeRegionId = regionId;
+    activeChannel  = 0;
+    streamStarted  = false;
+    const iframe      = document.getElementById("live-iframe");
+    const placeholder = document.getElementById("video-placeholder");
+    iframe.src          = "about:blank";
+    iframe.style.display  = "none";
+    placeholder.style.display = "";
+    renderVideoPanel();
+  }
 
   function selectChannel(idx) {
     activeChannel = idx;
-    document.querySelectorAll(".btn-channel").forEach((btn, i) => {
-      btn.classList.toggle("active", i === idx);
-    });
+    renderChannelBtns();
     if (streamStarted) loadStream(idx);
   }
 
   function loadStream(idx) {
-    const iframe = document.getElementById("live-iframe");
+    const list        = getActiveChannelList();
+    const iframe      = document.getElementById("live-iframe");
     const placeholder = document.getElementById("video-placeholder");
-    iframe.src = channels[idx].src;
-    iframe.style.display = "block";
+    if (!list[idx]) return;
+    iframe.src          = list[idx].src;
+    iframe.style.display  = "block";
     placeholder.style.display = "none";
     streamStarted = true;
   }
@@ -1402,6 +1689,7 @@
   // ── Init ──────────────────────────────────────────────────────────────────
   renderAuthHeader();
   renderPostArea();
+  renderVideoPanel();
   renderMatches();
   renderStats();
   renderTrending();
